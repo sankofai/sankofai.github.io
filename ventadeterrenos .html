@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terrenos — SankofAI</title>
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Space+Mono:wght@400;700&display=swap');
+
+:root {
+  --gold: #D4A017;
+  --gold-light: #F0C84A;
+  --gold-pale: #F7E08A;
+  --emerald: #00A86B;
+  --emerald-dark: #006644;
+  --emerald-glow: #00FF9F;
+  --black: #0A0A0A;
+  --black-mid: #111811;
+  --black-soft: #1A1F1A;
+  --white: #F5F0E8;
+  --white-dim: #9A9080;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'Space Mono', monospace;
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 20%, rgba(0,168,107,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(212,160,23,0.07) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* HEADER */
+.skf-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10,10,10,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(212,160,23,0.15);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.skf-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.skf-logo-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  background: linear-gradient(135deg, var(--gold-pale), var(--gold), var(--gold-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+
+.skf-logo-text span {
+  font-style: italic;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--emerald-glow), var(--emerald));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.skf-tagline {
+  font-size: 8px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--emerald);
+  opacity: 0.7;
+}
+
+/* HERO */
+.skf-hero {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 80px 32px 60px;
+  border-bottom: 1px solid rgba(212,160,23,0.1);
+  overflow: hidden;
+}
+
+.skf-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(0,100,68,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.skf-hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  background: linear-gradient(135deg, var(--gold-pale), var(--gold), var(--white));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.skf-hero p {
+  font-size: 0.82rem;
+  color: var(--white-dim);
+  max-width: 600px;
+  margin: 0 auto 32px;
+  line-height: 1.8;
+  letter-spacing: 0.05em;
+}
+
+.skf-divider {
+  width: 180px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 24px auto;
+}
+
+/* BUTTONS */
+.skf-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--emerald-dark), var(--emerald));
+  color: var(--black);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(0,168,107,0.3);
+}
+
+.skf-btn:hover {
+  background: linear-gradient(135deg, var(--emerald), var(--emerald-glow));
+  box-shadow: 0 6px 28px rgba(0,255,159,0.35);
+  transform: translateY(-1px);
+}
+
+.skf-btn-gold {
+  background: linear-gradient(135deg, #8a6800, var(--gold));
+  color: var(--black);
+  box-shadow: 0 4px 20px rgba(212,160,23,0.3);
+}
+
+.skf-btn-gold:hover {
+  background: linear-gradient(135deg, var(--gold), var(--gold-pale));
+  box-shadow: 0 6px 28px rgba(240,200,74,0.4);
+}
+
+/* CARDS */
+.skf-card {
+  background: var(--black-soft);
+  border: 1px solid rgba(212,160,23,0.12);
+  border-radius: 3px;
+  overflow: hidden;
+  transition: all 0.25s;
+  position: relative;
+}
+
+.skf-card:hover {
+  border-color: rgba(212,160,23,0.35);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 20px rgba(212,160,23,0.08);
+}
+
+.skf-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.skf-card:hover::before { opacity: 1; }
+
+/* SECTION */
+.skf-section {
+  position: relative;
+  z-index: 1;
+  padding: 60px 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.skf-section-label {
+  font-size: 9px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--emerald);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.skf-section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(0,168,107,0.4), transparent);
+}
+
+.skf-section h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.6rem, 4vw, 2.8rem);
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  color: var(--white);
+  margin-bottom: 12px;
+}
+
+/* GRID */
+.skf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+  margin-top: 32px;
+}
+
+/* INPUTS */
+.skf-input {
+  width: 100%;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(212,160,23,0.2);
+  border-radius: 2px;
+  padding: 12px 16px;
+  color: var(--white);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.82rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.skf-input:focus { border-color: var(--emerald); }
+.skf-input::placeholder { color: rgba(245,240,232,0.25); }
+
+/* FOOTER */
+.skf-footer {
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid rgba(212,160,23,0.1);
+  padding: 40px 32px;
+  text-align: center;
+}
+
+.skf-footer-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.skf-footer p {
+  font-size: 0.72rem;
+  color: var(--white-dim);
+  letter-spacing: 0.1em;
+}
+
+/* BADGE/TAG */
+.skf-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 2px;
+  font-family: 'Space Mono', monospace;
+}
+
+.skf-badge-gold {
+  background: rgba(212,160,23,0.12);
+  color: var(--gold);
+  border: 1px solid rgba(212,160,23,0.3);
+}
+
+.skf-badge-green {
+  background: rgba(0,168,107,0.12);
+  color: var(--emerald-glow);
+  border: 1px solid rgba(0,168,107,0.3);
+}
+
+/* PRICE */
+.skf-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--gold);
+  letter-spacing: 0.02em;
+}
+
+/* NAV LINKS */
+.skf-nav {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+
+.skf-nav a {
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--white-dim);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.skf-nav a:hover { color: var(--gold); }
+
+@media (max-width: 768px) {
+  .skf-header { padding: 12px 16px; }
+  .skf-hero { padding: 60px 16px 40px; }
+  .skf-section { padding: 40px 16px; }
+  .skf-nav { gap: 16px; }
+  .skf-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+}
+
+/* Overrides para contenido original */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+section { position: relative; z-index: 1; }
+h1, h2, h3 { font-family: 'Cormorant Garamond', serif; font-weight: 300; }
+h1 { font-size: clamp(2rem, 5vw, 3.5rem); background: linear-gradient(135deg, #F7E08A, #D4A017, #F5F0E8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+h2 { font-size: clamp(1.4rem, 3vw, 2.4rem); color: #F5F0E8; letter-spacing: 0.04em; }
+h3 { font-size: 1.2rem; color: #F0C84A; }
+p { color: #9A9080; line-height: 1.8; font-size: 0.85rem; }
+a { color: #00A86B; text-decoration: none; transition: color 0.2s; }
+a:hover { color: #00FF9F; }
+img { max-width: 100%; border-radius: 2px; }
+input, textarea, select {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(212,160,23,0.2);
+  border-radius: 2px;
+  padding: 12px 16px;
+  color: #F5F0E8;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.82rem;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s;
+}
+input:focus, textarea:focus { border-color: #00A86B; }
+button, .btn, .cta-btn, [class*="btn"], [class*="button"] {
+  background: linear-gradient(135deg, #006644, #00A86B) !important;
+  color: #0A0A0A !important;
+  border: none !important;
+  font-family: 'Space Mono', monospace !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.2em !important;
+  text-transform: uppercase !important;
+  padding: 12px 24px !important;
+  border-radius: 2px !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+  box-shadow: 0 4px 16px rgba(0,168,107,0.25) !important;
+}
+button:hover, .btn:hover, .cta-btn:hover {
+  background: linear-gradient(135deg, #00A86B, #00FF9F) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 24px rgba(0,255,159,0.3) !important;
+}
+.hero { background: radial-gradient(ellipse 80% 60% at 50% 40%, #0d2a1a 0%, #0A0A0A 70%) !important; }
+.hero h1 span { background: linear-gradient(135deg, #00FF9F, #00A86B); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+/* Cards */
+.product-card, .service-card, .card, [class*="card"], [class*="item"] {
+  background: #1A1F1A !important;
+  border: 1px solid rgba(212,160,23,0.12) !important;
+  border-radius: 3px !important;
+  transition: all 0.25s !important;
+}
+.product-card:hover, [class*="card"]:hover {
+  border-color: rgba(212,160,23,0.35) !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5) !important;
+}
+/* Price */
+.price, [class*="price"] { color: #D4A017 !important; font-family: 'Cormorant Garamond', serif !important; font-size: 1.4rem !important; font-weight: 600 !important; }
+/* Badges */
+[class*="badge"], [class*="tag"], [class*="label"] { background: rgba(212,160,23,0.12) !important; color: #F0C84A !important; border: 1px solid rgba(212,160,23,0.3) !important; border-radius: 2px !important; font-size: 0.65rem !important; letter-spacing: 0.2em !important; text-transform: uppercase !important; }
+/* Sections */
+section { padding: 60px 0; }
+.section-title, [class*="section-title"] { font-family: 'Cormorant Garamond', serif !important; font-weight: 300 !important; color: #F5F0E8 !important; font-size: clamp(1.6rem, 3vw, 2.8rem) !important; margin-bottom: 32px !important; }
+/* Nav */
+nav a, .nav-link { color: #9A9080 !important; font-size: 0.72rem !important; letter-spacing: 0.2em !important; text-transform: uppercase !important; }
+nav a:hover { color: #D4A017 !important; }
+/* Dividers */
+hr { border: none; border-top: 1px solid rgba(212,160,23,0.15); margin: 32px 0; }
+</style>
+</head>
+<body>
+
+
+<header class="skf-header">
+  <a href="#" class="skf-logo">
+    <svg class="logo-bird" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:48px;height:48px;filter:drop-shadow(0 0 8px rgba(212,160,23,0.6));">
+  <defs>
+    <linearGradient id="goldGradH" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#F7E08A"/><stop offset="40%" stop-color="#D4A017"/><stop offset="100%" stop-color="#A07010"/></linearGradient>
+    <linearGradient id="emeraldGradH" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00FF9F"/><stop offset="100%" stop-color="#00A86B"/></linearGradient>
+  </defs>
+  <ellipse cx="100" cy="115" rx="38" ry="28" fill="url(#goldGradH)"/>
+  <path d="M62 108 C30 85, 18 60, 28 45 C38 30, 58 40, 70 60 C78 72, 78 90, 74 105 Z" fill="url(#goldGradH)" opacity="0.85"/>
+  <path d="M138 108 C170 85, 182 60, 172 45 C162 30, 142 40, 130 60 C122 72, 122 90, 126 105 Z" fill="url(#goldGradH)" opacity="0.75"/>
+  <path d="M90 100 C88 85, 92 68, 100 58 C108 68, 112 85, 110 100 Z" fill="url(#goldGradH)"/>
+  <ellipse cx="100" cy="50" rx="18" ry="16" fill="url(#goldGradH)"/>
+  <circle cx="107" cy="46" r="4" fill="url(#emeraldGradH)"/>
+  <circle cx="108.5" cy="45" r="1.5" fill="#0A0A0A"/>
+  <path d="M115 50 L124 46 L120 52 Z" fill="url(#goldGradH)"/>
+  <path d="M98 34 C96 20, 94 10, 96 4 C100 10, 103 22, 102 34 Z" fill="url(#goldGradH)"/>
+  <path d="M75 135 C60 148, 42 155, 30 152 C38 144, 58 138, 74 128 Z" fill="url(#goldGradH)" opacity="0.8"/>
+  <path d="M125 135 C140 148, 158 155, 170 152 C162 144, 142 138, 126 128 Z" fill="url(#goldGradH)" opacity="0.65"/>
+  <circle cx="100" cy="118" r="6" fill="none" stroke="url(#emeraldGradH)" stroke-width="1" opacity="0.7"/>
+  <circle cx="100" cy="118" r="2" fill="url(#emeraldGradH)" opacity="0.9"/>
+</svg>
+    <div>
+      <div class="skf-logo-text">Sank<span>ofAI</span></div>
+      <div class="skf-tagline">Powered by Intelligence</div>
+    </div>
+  </a>
+  <nav class="skf-nav" id="skf-nav-links">
+  </nav>
+</header>
+
+
+<main style="position:relative;z-index:1;">
+
+<!-- SVG Icons -->
+<svg class="hidden">
+  <symbol id="icon-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+  </symbol>
+  <symbol id="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <line x1="3" y1="12" x2="21" y2="12"></line>
+    <line x1="3" y1="6" x2="21" y2="6"></line>
+    <line x1="3" y1="18" x2="21" y2="18"></line>
+  </symbol>
+  <symbol id="icon-whatsapp" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+  </symbol>
+  <symbol id="icon-location" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+    <circle cx="12" cy="10" r="3"></circle>
+  </symbol>
+  <symbol id="icon-area" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+    <line x1="9" y1="3" x2="9" y2="21"></line>
+    <line x1="15" y1="3" x2="15" y2="21"></line>
+    <line x1="3" y1="9" x2="21" y2="9"></line>
+    <line x1="3" y1="15" x2="21" y2="15"></line>
+  </symbol>
+  <symbol id="icon-price" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <line x1="12" y1="1" x2="12" y2="23"></line>
+    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+  </symbol>
+  <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <polyline points="20 6 9 17 4 12"></polyline>
+  </symbol>
+  <symbol id="icon-finance" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+    <line x1="1" y1="10" x2="23" y2="10"></line>
+  </symbol>
+  <symbol id="icon-trending" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+    <polyline points="17 6 23 12"></polyline>
+  </symbol>
+  <symbol id="icon-document" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+    <polyline points="14 2 14 8 20 8"></polyline>
+    <line x1="16" y1="13" x2="8" y2="13"></line>
+    <line x1="16" y1="17" x2="8" y2="17"></line>
+    <polyline points="10 9 9 9 8 9"></polyline>
+  </symbol>
+  <symbol id="icon-star" viewBox="0 0 24 24" fill="currentColor">
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+  </symbol>
+  <symbol id="icon-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <polyline points="6 9 12 15 18 9"></polyline>
+  </symbol>
+  <symbol id="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+    <circle cx="12" cy="12" r="3"></circle>
+  </symbol>
+</svg>
+
+<!-- Header -->
+
+
+<!-- Hero Section -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        +500 familias ya invirtieron con nosotros
+      </div>
+      <h1>Tu Lote Ideal <span class="gradient-text">Te Espera</span></h1>
+      <p>Invierte en terrenos premium con alta plusvalía, financiamiento flexible y todos los papeles en regla. Construye tu patrimonio hoy.</p>
+      
+      <div class="filters">
+        <div class="filters-grid">
+          <div class="filter-group">
+            <label>Zona</label>
+            <select id="filterZona">
+              <option>Todas las zonas</option>
+              <option>Zona Norte</option>
+              <option>Zona Sur</option>
+              <option>Zona Este</option>
+              <option>Zona Oeste</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Presupuesto</label>
+            <select id="filterPrecio">
+              <option>Cualquier precio</option>
+              <option>$300k - $500k</option>
+              <option>$500k - $800k</option>
+              <option>$800k - $1.2M</option>
+              <option>+$1.2M</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Superficie</label>
+            <select id="filterM2">
+              <option>Cualquier tamaño</option>
+              <option>120 - 200 m²</option>
+              <option>200 - 300 m²</option>
+              <option>300 - 500 m²</option>
+              <option>+500 m²</option>
+            </select>
+          </div>
+          <div class="filter-group" style="justify-content: flex-end;">
+            <label style="opacity: 0;">Buscar</label>
+            <button class="btn btn-primary" style="width: 100%;">
+              Buscar Lotes
+              <svg width="18" height="18"><use href="#icon-chevron"></use></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Terrenos Destacados -->
+<section id="terrenos">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Lotes Premium</span>
+      <h2 class="section-title">Terrenos Destacados</h2>
+      <p class="section-desc">Seleccionamos los mejores lotes con ubicaciones estratégicas y máximo potencial de plusvalía</p>
+    </div>
+    
+    <div class="terrenos-grid">
+      <!-- Terreno 1 -->
+      <div class="terreno-card">
+        <div class="terreno-img">
+          <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&h=600&fit=crop" alt="Lote Residencial Los Pinos" loading="lazy">
+          <span class="terreno-badge">Disponible</span>
+        </div>
+        <div class="terreno-content">
+          <div class="terreno-location">
+            <svg width="16" height="16"><use href="#icon-location"></use></svg>
+            Los Pinos, Zona Norte
+          </div>
+          <h3 class="terreno-title">Lote Residencial Premium</h3>
+          <div class="terreno-features">
+            <div class="feature-item">
+              <svg><use href="#icon-area"></use></svg>
+              250 m²
+            </div>
+            <div class="feature-item">
+              <svg><use href="#icon-check"></use></svg>
+              Servicios
+            </div>
+            <div class="feature-item">
+              <svg><use href="#icon-document"></use></svg>
+              Título libre
+            </div>
+            <div class="feature-item">
+              <svg><use href="#icon-trending"></use></svg>
+              Alta plusvalía
+            </div>
+          </div>
+          <div class="terreno-footer">
+            <div>
+              <div class="terreno-price">
+                $450,000
+                <span>Precio total</span>
+              </div>
+            <div class="terreno-actions">
+              <a href="#cotiza" class="btn btn-secondary btn-icon">
+                <svg width="20" height="20"><use href="#icon-eye"></use></svg>
+              </a>
+              <a href="https://wa.me/5212345678900?text=Me%20interesa%20el%20Lote%20Residencial%20Premium%20en%20Los%20Pinos%20de%20$450,000" class="btn btn-whatsapp" target="_blank">
+                <svg width="18" height="18"><use href="#icon-whatsapp"></use></svg>
+                Consultar
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Terreno 2 -->
+      <div class="terreno-card">
+        <div class="terreno-img">
+          <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=600&fit=crop" alt="Lote Campestre" loading="lazy">
+          <span class="terreno-badge">Últimas unidades</span>
+        </div>
+        <div class="terreno-content">
+          <div class="terreno-location">
+            <svg width="16" height="16"><use href="#icon-location"></use></svg>
+            Valle Verde, Zona Sur
+          </div>
+          <h3 class="terreno-title">Lote Campestre Exclusivo</h3>
+          <div class="terreno-features">
+            <div class="feature-item">
+              <svg><use href="#icon-area"></use></svg>
+              400 m²
+            </div>
+            <div class="feature-item">
+              <svg><use href="#icon-check"></use></svg>
+              Club house
+            </div>
+            <div class="feature-item">
+              <svg><use href="#icon-document"></use></svg>
+              Título libre
+            </div>
+            <div class="feature-item">
+              <svg><use href="#icon-trending"></use></svg>
+              +25% anual
+            </div>
+          <div class="terreno-footer">
+            <div>
+              <div class="terreno-price">
+                $780,000
+                <span>Precio total</span>
+              </div>
+            </div>
+            <div class="terreno-actions">
+              <a href="#cotiza" class="btn btn-secondary btn-icon">
+                <svg width="20" height="20"><use href="#icon-eye"></use></svg>
+              </a>
+              <a href="https://wa.me/5212345678900?text=Me%20interesa%20el%20Lote%20Campestre%20Exclusivo%20en%20Valle%20Verde%20de%20$780,000" class="btn btn-whatsapp" target="_blank">
+                <svg width="18" height="18"><use href="#icon-whatsapp"></use></svg>
+                Consultar
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Terreno 3 -->
+      <div class="terreno-card">
+        <div class="terreno-img">
+          <img src="https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?w=800&h=600&fit=crop" alt="Lote Comercial" loading="lazy">
+          <span class="terreno-badge">Financiamiento disponible</span>
+        </div>
+        <div class="terreno-content">
+          <div class="terreno-location">
+            <svg width="16" height="16"><use href="#icon-location"></use></svg>
+            Zona Diamante, Este
+          </div>
+          <h3 class="terreno-title">Lote Comercial Premium</h3>
+          <div class="terreno-features">
+            <div class="feature-item">
+              <svg><use href="#icon-area"></use></svg>
+              320 m²
+            </div>
+            <div class="feature-item">
+              <svg><use href="#icon-check"></use></svg>
+              Uso de suelo
+            </div>
+            <div class="feature-item">
+              <svg><use href="#icon-document"></use></svg>
+              Título libre
+            </div>
+            <div class="feature-item">
+              <svg><use href="#icon-trending"></use></svg>
+              ROI 30%
+            </div>
+          </div>
+          <div class="terreno-footer">
+            <div>
+              <div class="terreno-price">
+                $1,250,000
+                <span>Precio total</span>
+              </div>
+            </div>
+            <div class="terreno-actions">
+              <a href="#cotiza" class="btn btn-secondary btn-icon">
+                <svg width="20" height="20"><use href="#icon-eye"></use></svg>
+              </a>
+              <a href="https://wa.me/5212345678900?text=Me%20interesa%20el%20Lote%20Comercial%20Premium%20en%20Zona%20Diamante%20de%20$1,250,000" class="btn btn-whatsapp" target="_blank">
+                <svg width="18" height="18"><use href="#icon-whatsapp"></use></svg>
+                Consultar
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Terreno 4 -->
+      <div class="terreno-card">
+        <div class="terreno-img">
+          <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&h=600&fit=crop" alt="Lote Familiar" loading="lazy">
+          <span class="terreno-badge">Preventa</span>
+        </div>
+        <div class="terreno-content">
+          <div class="terreno-location">
+            <svg width="16" height="16"><use href="#icon-location"></use></svg>
+            Bosques, Zona Oeste
+          </div>
+          <h3 class="terreno-title">Lote Familiar Bosques</h3>
+          <div class="terreno-features">
+            <div class="feature-item">
+              <svg><use href="#icon-area"></use></svg>
+              180 m²
+            </div>
+            <div class="feature-item">
+              <svg><use href="#icon-check"></use></svg>
+              Amenidades
+            </div>
+            <div class="feature-item">
+              <svg><use href="#icon-document"></use></svg>
+              Título libre
+            </div>
+            <div class="feature-item">
+              <svg><use href="#icon-trending"></use></svg>
+              Crecimiento
+            </div>
+          </div>
+          <div class="terreno-footer">
+            <div>
+              <div class="terreno-price">
+                $320,000
+                <span>Precio total</span>
+              </div>
+            </div>
+            <div class="terreno-actions">
+              <a href="#cotiza" class="btn btn-secondary btn-icon">
+                <svg width="20" height="20"><use href="#icon-eye"></use></svg>
+              </a>
+              <a href="https://wa.me/5212345678900?text=Me%20interesa%20el%20Lote%20Familiar%20Bosques%20de%20$320,000" class="btn btn-whatsapp" target="_blank">
+                <svg width="18" height="18"><use href="#icon-whatsapp"></use></svg>
+                Consultar
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Terreno 5 -->
+      <div class="terreno-card">
+        <div class="terreno-img">
+          <img src="https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=800&h=600&fit=crop" alt="Lote Inversión" loading="lazy">
+          <span class="terreno-badge">Oportunidad</span>
+        </div>
+        <div class="terreno-content">
+          <div class="terreno-location">
+            <svg width="16" height="16"><use href="#icon-location"></use></svg>
+            Las Palmas, Zona Norte
+          </div>
+          <h3 class="terreno-title">Lote de Inversión</h3>
+          <div class="terreno-features">
+            <div class="feature-item">
+              <svg><use href="#icon-area"></use></svg>
+              600 m²
+            </div>
+            <div class="feature-item">
+              <svg><use href="#icon-check"></use></svg>
+              Mixto
+            </div>
+            <div class="feature-item">
+              <svg><use href="#icon-document"></use></svg>
+              Título libre
+            </div>
+            <div class="feature-item">
+              <svg><use href="#icon-trending"></use></svg>
+              +40% plusvalía
+            </div>
+          <div class="terreno-footer">
+            <div>
+              <div class="terreno-price">
+                $950,000
+                <span>Precio total</span>
+              </div>
+            </div>
+            <div class="terreno-actions">
+              <a href="#cotiza" class="btn btn-secondary btn-icon">
+                <svg width="20" height="20"><use href="#icon-eye"></use></svg>
+              </a>
+              <a href="https://wa.me/5212345678900?text=Me%20interesa%20el%20Lote%20de%20Inversión%20en%20Las%20Palmas%20de%20$950,000" class="btn btn-whatsapp" target="_blank">
+                <svg width="18" height="18"><use href="#icon-whatsapp"></use></svg>
+                Consultar
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Terreno 6 -->
+      <div class="terreno-card">
+        <div class="terreno-img">
+          <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=600&fit=crop" alt="Lote Vista Panorámica" loading="lazy">
+          <span class="terreno-badge">Vista premium</span>
+        </div>
+        <div class="terreno-content">
+          <div class="terreno-location">
+            <svg width="16" height="16"><use href="#icon-location"></use></svg>
+            Mirador, Zona Sur
+          </div>
+          <h3 class="terreno-title">Lote Vista Panorámica</h3>
+          <div class="terreno-features">
+            <div class="feature-item">
+              <svg><use href="#icon-area"></use></svg>
+              350 m²
+            </div>
+            <div class="feature-item">
+              <svg><use href="#icon-check"></use></svg>
+              Vista al mar
+            </div>
+            <div class="feature-item">
+              <svg><use href="#icon-document"></use></svg>
+              Título libre
+            </div>
+            <div class="feature-item">
+              <svg><use href="#icon-trending"></use></svg>
+              Exclusivo
+            </div>
+          <div class="terreno-footer">
+            <div>
+              <div class="terreno-price">
+                $680,000
+                <span>Precio total</span>
+              </div>
+            </div>
+            <div class="terreno-actions">
+              <a href="#cotiza" class="btn btn-secondary btn-icon">
+                <svg width="20" height="20"><use href="#icon-eye"></use></svg>
+              </a>
+              <a href="https://wa.me/5212345678900?text=Me%20interesa%20el%20Lote%20Vista%20Panorámica%20en%20Mirador%20de%20$680,000" class="btn btn-whatsapp" target="_blank">
+                <svg width="18" height="18"><use href="#icon-whatsapp"></use></svg>
+                Consultar
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Beneficios -->
+<section id="beneficios" style="background: var(--bg-secondary);">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Ventajas</span>
+      <h2 class="section-title">¿Por Qué Invertir Con Nosotros?</h2>
+      <p class="section-desc">Ofrecemos la mejor experiencia en inversión inmobiliaria con beneficios únicos</p>
+    </div>
+    
+    <div class="beneficios-grid">
+      <div class="beneficio-card">
+        <div class="beneficio-icon">
+          <svg><use href="#icon-finance"></use></svg>
+        </div>
+        <h3>Financiamiento Flexible</h3>
+        <p>Hasta 60 meses sin intereses y enganche desde 10%. Planes personalizados que se adaptan a tu presupuesto con aprobacion inmediata.</p>
+      </div>
+      
+      <div class="beneficio-card">
+        <div class="beneficio-icon">
+          <svg><use href="#icon-location"></use></svg>
+        </div>
+        <h3>Ubicación Estratégica</h3>
+        <p>Todos nuestros desarrollos están en zonas de alto crecimiento, cerca de vialidades principales, escuelas, hospitales y centros comerciales.</p>
+      </div>
+      
+      <div class="beneficio-card">
+        <div class="beneficio-icon">
+          <svg><use href="#icon-trending"></use></svg>
+        </div>
+        <h3>Plusvalía Garantizada</h3>
+        <p>Proyectos con proyección de plusvalía del 25-40% anual. Invierte hoy y asegura el crecimiento de tu patrimonio a largo plazo.</p>
+      </div>
+      
+      <div class="beneficio-card">
+        <div class="beneficio-icon">
+          <svg><use href="#icon-document"></use></svg>
+        </div>
+        <h3>Papeles en Regla</h3>
+        <p>Título de propiedad libre de gravamen, sin problemas legales. Entrega inmediata con certeza jurídica total respaldada por notaría.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Formulario Cotización -->
+<section id="cotiza">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Cotización Gratis</span>
+      <h2 class="section-title">Cotiza Tu Lote Ideal</h2>
+      <p class="section-desc">Completa el formulario y un asesor experto te contactará en menos de 24 horas</p>
+    </div>
+    
+    <div class="form-section">
+      <form id="cotizaForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="nombre">Nombre completo *</label>
+            <input type="text" id="nombre" name="nombre" required placeholder="Juan Pérez">
+          </div>
+          
+          <div class="form-group">
+            <label for="telefono">Teléfono / WhatsApp *</label>
+            <input type="tel" id="telefono" name="telefono" required placeholder="55 1234 5678">
+          </div>
+          
+          <div class="form-group">
+            <label for="presupuesto">Presupuesto estimado</label>
+            <select id="presupuesto" name="presupuesto">
+              <option value="">Selecciona tu presupuesto</option>
+              <option value="300-500k">$300,000 - $500,000</option>
+              <option value="500-800k">$500,000 - $800,000</option>
+              <option value="800-1.2M">$800,000 - $1,200,000</option>
+              <option value="1.2M+">Más de $1,200,000</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="zona">Zona de interés</label>
+            <select id="zona" name="zona">
+              <option value="">Selecciona una zona</option>
+              <option value="norte">Zona Norte</option>
+              <option value="sur">Zona Sur</option>
+              <option value="este">Zona Este</option>
+              <option value="oeste">Zona Oeste</option>
+              <option value="todas">Todas las zonas</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="mensaje">Mensaje adicional (opcional)</label>
+          <textarea id="mensaje" name="mensaje" placeholder="Cuéntanos más sobre el lote que buscas..."></textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 1rem;">
+          Solicitar Cotización Gratis
+          <svg width="20" height="20"><use href="#icon-chevron"></use></svg>
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Mapa -->
+<section id="proyectos">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Ubicaciones</span>
+      <h2 class="section-title">Mapa de Proyectos</h2>
+      <p class="section-desc">Conoce todos nuestros desarrollos en las mejores zonas de la ciudad</p>
+    </div>
+    
+    <div class="mapa-container">
+      <iframe 
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d119096.93920852181!2d-97.47545098730664!3d25.86729487633!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85f846cfd57ac3f1%3A0x5d34b2e2e3e3e3e3!2sMatamoros%2C%20Tamps.!5e0!3m2!1ses!2smx!4v1234567890"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title="Ubicación de proyectos Terralote">
+      </iframe>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonios -->
+<section id="testimonios" style="background: var(--bg-secondary);">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Experiencias</span>
+      <h2 class="section-title">Lo Que Dicen Nuestros Clientes</h2>
+      <p class="section-desc">Más de 500 familias han confiado en nosotros para su inversión</p>
+    </div>
+    
+    <div class="testimonios-grid">
+      <div class="testimonio-card">
+        <div class="testimonio-header">
+          <div class="avatar">MC</div>
+          <div class="testimonio-info">
+            <h4>María Castillo</h4>
+            <p>Inversionista - Los Pinos</p>
+          </div>
+        </div>
+        <div class="stars">
+          <svg><use href="#icon-star"></use></svg>
+          <svg><use href="#icon-star"></use></svg>
+          <svg><use href="#icon-star"></use></svg>
+          <svg><use href="#icon-star"></use></svg>
+          <svg><use href="#icon-star"></use></svg>
+        </div>
+        <p class="testimonio-text">
+          "Excelente atención desde el primer día. Compré mi lote hace 2 años y ya duplicó su valor. El financiamiento fue muy flexible y sin complicaciones."
+        </p>
+      </div>
+      
+      <div class="testimonio-card">
+        <div class="testimonio-header">
+          <div class="avatar">JR</div>
+          <div class="testimonio-info">
+            <h4>José Ramírez</h4>
+            <p>Comprador - Valle Verde</p>
+          </div>
+        <div class="stars">
+          <svg><use href="#icon-star"></use></svg>
+          <svg><use href="#icon-star"></use></svg>
+          <svg><use href="#icon-star"></use></svg>
+          <svg><use href="#icon-star"></use></svg>
+          <svg><use href="#icon-star"></use></svg>
+        </div>
+        <p class="testimonio-text">
+          "Proceso transparente y papeles entregados sin demoras. La ubicación es perfecta y el desarrollo tiene todas las amenidades prometidas. 100% recomendado."
+        </p>
+      </div>
+      
+      <div class="testimonio-card">
+        <div class="testimonio-header">
+          <div class="avatar">AG</div>
+          <div class="testimonio-info">
+            <h4>Ana González</h4>
+            <p>Inversionista - Zona Diamante</p>
+          </div>
+        </div>
+        <div class="stars">
+          <svg><use href="#icon-star"></use></svg>
+          <svg><use href="#icon-star"></use></svg>
+          <svg><use href="#icon-star"></use></svg>
+          <svg><use href="#icon-star"></use></svg>
+          <svg><use href="#icon-star"></use></svg>
+        </div>
+        <p class="testimonio-text">
+          "Ya llevo 3 lotes con ellos. La plusvalía es real y el equipo siempre está disponible para resolver dudas. La mejor inversión que he hecho."
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Dudas</span>
+      <h2 class="section-title">Preguntas Frecuentes</h2>
+      <p class="section-desc">Resolvemos tus dudas sobre la compra de terrenos</p>
+    </div>
+    
+    <div class="faq-container">
+      <div class="faq-item">
+        <button class="faq-question">
+          ¿Qué documentos necesito para comprar un lote?
+          <svg><use href="#icon-chevron"></use></svg>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            Solo necesitas identificación oficial vigente (INE), comprobante de domicilio reciente y RFC. Nosotros nos encargamos de todos los trámites notariales para que tengas tu escritura sin complicaciones.
+          </div>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <button class="faq-question">
+          ¿Cuáles son las opciones de financiamiento disponibles?
+          <svg><use href="#icon-chevron"></use></svg>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            Ofrecemos planes de hasta 60 meses sin intereses con enganche desde 10%. También aceptamos pago de contado con descuento especial. Todos nuestros planes son sin buró de crédito y con aprobación inmediata.
+          </div>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <button class="faq-question">
+          ¿Los terrenos cuentan con servicios básicos?
+          <svg><use href="#icon-chevron"></use></svg>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            Sí, todos nuestros lotes tienen agua, luz y drenaje. Además, los desarrollos cuentan con calles pavimentadas, alumbrado público y en algunos casos amenidades como casa club, áreas verdes y seguridad 24/7.
+          </div>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <button class="faq-question">
+          ¿En cuánto tiempo me entregan mi escritura?
+          <svg><use href="#icon-chevron"></use></svg>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            La entrega de escritura es inmediata al liquidar tu terreno, o en un plazo máximo de 90 días en caso de financiamiento. Todos nuestros lotes tienen título libre de gravamen y certeza jurídica total.
+          </div>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <button class="faq-question">
+          ¿Puedo construir inmediatamente después de comprar?
+          <svg><use href="#icon-chevron"></use></svg>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            Sí, una vez que tengas tu escritura puedes comenzar a construir. Te entregamos el uso de suelo y reglamento de construcción de cada fraccionamiento. Además, podemos recomendarte arquitectos y constructores de confianza.
+          </div>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <button class="faq-question">
+          ¿Qué garantía tengo sobre la plusvalía del terreno?
+          <svg><use href="#icon-chevron"></use></svg>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            Todos nuestros desarrollos están en zonas con alta proyección de crecimiento. Históricamente, nuestros lotes han tenido plusvalía del 25-40% anual. Te entregamos estudios de mercado y proyecciones certificadas al momento de tu compra.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+
+
+<!-- WhatsApp Float Button -->
+<a href="https://wa.me/5212345678900?text=Hola%2C%20quiero%20información%20sobre%20los%20terrenos%20disponibles" class="whatsapp-float" target="_blank" aria-label="Contactar por WhatsApp">
+  <svg width="32" height="32" style="color: white;"><use href="#icon-whatsapp"></use></svg>
+</a>
+
+<script>
+// Menu Toggle Mobile
+const menuToggle = document.getElementById('menuToggle');
+const navLinks = document.getElementById('navLinks');
+
+menuToggle.addEventListener('click', () => {
+  navLinks.classList.toggle('active');
+});
+
+// Cerrar menú al hacer click en link
+document.querySelectorAll('.nav-links a').forEach(link => {
+  link.addEventListener('click', () => {
+    navLinks.classList.remove('active');
+  });
+});
+
+// FAQ Accordion
+document.querySelectorAll('.faq-question').forEach(button => {
+  button.addEventListener('click', () => {
+    const faqItem = button.parentElement;
+    const answer = faqItem.querySelector('.faq-answer');
+    const isActive = faqItem.classList.contains('active');
+    
+    // Cerrar todos
+    document.querySelectorAll('.faq-item').forEach(item => {
+      item.classList.remove('active');
+      item.querySelector('.faq-answer').style.maxHeight = null;
+    });
+    
+    // Abrir el clickeado si no estaba activo
+    if (!isActive) {
+      faqItem.classList.add('active');
+      answer.style.maxHeight = answer.scrollHeight + 'px';
+    }
+  });
+});
+
+// Form Submit
+const cotizaForm = document.getElementById('cotizaForm');
+cotizaForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  
+  const formData = new FormData(cotizaForm);
+  const nombre = formData.get('nombre');
+  const telefono = formData.get('telefono');
+  const presupuesto = formData.get('presupuesto');
+  const zona = formData.get('zona');
+  const mensaje = formData.get('mensaje');
+  
+  // Construir mensaje de WhatsApp
+  let whatsappMsg = `Hola, soy ${nombre}.%0A`;
+  whatsappMsg += `Teléfono: ${telefono}%0A`;
+  if (presupuesto) whatsappMsg += `Presupuesto: ${presupuesto}%0A`;
+  if (zona) whatsappMsg += `Zona de interés: ${zona}%0A`;
+  if (mensaje) whatsappMsg += `Mensaje: ${mensaje}`;
+  
+  // Abrir WhatsApp con los datos
+  window.open(`https://wa.me/5212345678900?text=${whatsappMsg}`, '_blank');
+  
+  // Reset form
+  cotizaForm.reset();
+  alert('¡Gracias! Te redirigimos a WhatsApp para completar tu cotización.');
+});
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    const href = this.getAttribute('href');
+    if (href !== '#' && document.querySelector(href)) {
+      e.preventDefault();
+      const target = document.querySelector(href);
+      const headerOffset = 80;
+      const elementPosition = target.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  });
+});
+</script>
+
+
+</main>
+
+
+<footer class="skf-footer">
+  <div class="skf-footer-logo">
+    <svg class="logo-bird" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:48px;height:48px;filter:drop-shadow(0 0 8px rgba(212,160,23,0.6));">
+  <defs>
+    <linearGradient id="goldGradH" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#F7E08A"/><stop offset="40%" stop-color="#D4A017"/><stop offset="100%" stop-color="#A07010"/></linearGradient>
+    <linearGradient id="emeraldGradH" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00FF9F"/><stop offset="100%" stop-color="#00A86B"/></linearGradient>
+  </defs>
+  <ellipse cx="100" cy="115" rx="38" ry="28" fill="url(#goldGradH)"/>
+  <path d="M62 108 C30 85, 18 60, 28 45 C38 30, 58 40, 70 60 C78 72, 78 90, 74 105 Z" fill="url(#goldGradH)" opacity="0.85"/>
+  <path d="M138 108 C170 85, 182 60, 172 45 C162 30, 142 40, 130 60 C122 72, 122 90, 126 105 Z" fill="url(#goldGradH)" opacity="0.75"/>
+  <path d="M90 100 C88 85, 92 68, 100 58 C108 68, 112 85, 110 100 Z" fill="url(#goldGradH)"/>
+  <ellipse cx="100" cy="50" rx="18" ry="16" fill="url(#goldGradH)"/>
+  <circle cx="107" cy="46" r="4" fill="url(#emeraldGradH)"/>
+  <circle cx="108.5" cy="45" r="1.5" fill="#0A0A0A"/>
+  <path d="M115 50 L124 46 L120 52 Z" fill="url(#goldGradH)"/>
+  <path d="M98 34 C96 20, 94 10, 96 4 C100 10, 103 22, 102 34 Z" fill="url(#goldGradH)"/>
+  <path d="M75 135 C60 148, 42 155, 30 152 C38 144, 58 138, 74 128 Z" fill="url(#goldGradH)" opacity="0.8"/>
+  <path d="M125 135 C140 148, 158 155, 170 152 C162 144, 142 138, 126 128 Z" fill="url(#goldGradH)" opacity="0.65"/>
+  <circle cx="100" cy="118" r="6" fill="none" stroke="url(#emeraldGradH)" stroke-width="1" opacity="0.7"/>
+  <circle cx="100" cy="118" r="2" fill="url(#emeraldGradH)" opacity="0.9"/>
+</svg>
+    <div class="skf-logo-text" style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:300;letter-spacing:0.12em;background:linear-gradient(135deg,#F7E08A,#D4A017);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Sank<span style="font-style:italic;background:linear-gradient(135deg,#00FF9F,#00A86B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">ofAI</span></div>
+  </div>
+  <div class="skf-divider"></div>
+  <p>© 2025 SankofAI — Todos los derechos reservados</p>
+</footer>
+
+
+</body>
+</html>
